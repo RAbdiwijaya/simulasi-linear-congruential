@@ -1,0 +1,52 @@
+/* Container utama untuk layout */
+.container {
+  display: flex;
+  align-items: flex-start;
+  gap: 30px;
+  padding: 20px;
+}
+
+/* Area tabel */
+.table-area {
+  flex-shrink: 0; /* Mempertahankan ukuran tabel */
+}
+
+/* Styling tabel */
+table {
+  border-collapse: collapse;
+  width: 600px;
+}
+
+th, td {
+  border: 1px solid black;
+  padding: 8px;
+  text-align: center;
+}
+
+/* Area form input */
+.form-area {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  flex: 1; 
+}
+
+/* Grup button */
+.button-group {
+  display: flex;
+  gap: 10px;
+}
+
+/* Item form individual */
+.form-item {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Grup radio button */
+.radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}

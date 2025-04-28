@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% block head %}
+<h1 class="text-center text-2xl font-bold mb-2 mt-4">SIMULASI KEDATANGAN DAN PELAYANAN</h1>
+<h2 class="text-center text-lg font-semibold mb-6">DENGAN PEMBANGKIT BILANGAN ACAK LINEAR CONGRUENTIAL</h2>
+{% endblock %}
+
+{% block body %}
+<div class="container mx-auto p-4">
+    <div class="flex flex-wrap">
+        <!-- Tabel di sisi kiri -->
+        <div class="w-full lg:w-2/3 p-2">
+            <div class="bg-white shadow-md rounded p-4">
+                <div class="overflow-auto">
+                    <table class="table-auto border-collapse border border-gray-300 w-full text-sm">
+                        <thead>
+                            <tr class="bg-gray-200">
+                                <th class="border border-gray-300 px-2 py-1">Nasabah</th>
+                                <th class="border border-gray-300 px-2 py-1">Waktu Antar Kedatangan</th>
+                                <th class="border border-gray-300 px-2 py-1">Waktu Kedatangan</th>
+                                <th class="border border-gray-300 px-2 py-1">Waktu Pelayanan</th>
+                                <th class="border border-gray-300 px-2 py-1">Waktu Mulai</th>
+                                <th class="border border-gray-300 px-2 py-1">Waktu Selesai</th>
+                                <th class="border border-gray-300 px-2 py-1">Waktu Menunggu</th>
+                                <th class="border border-gray-300 px-2 py-1">Waktu Sistem</th>
+                                <th class="border border-gray-300 px-2 py-1">Teller Menganggur</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in rows %}
+                            <tr>
+                                {% for cell in row %}
+                                <td class="border border-gray-300 px-2 py-1 text-center">{{ cell }}</td>
+                                {% endfor %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- Statistik di bawah tabel -->
+            <div class="mt-4 bg-white shadow-md rounded p-4">
+                <h3 class="text-lg font-bold mb-2">Statistik</h3>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <p>Jumlah Nasabah: {{ stats.jumlah_nasabah }}</p>
+                        <p>Jumlah Antar Kedatangan: {{ stats.jumlah_antar_kedatangan }}</p>
+                        <p>Jumlah Pelayanan: {{ stats.jumlah_pelayanan }}</p>
+                        <p>Jumlah Waktu Tunggu: {{ stats.jumlah_waktu_tunggu }}</p>
+                        <p>Jumlah Waktu Dalam Sistem: {{ stats.jumlah_waktu_dalam_sistem }}</p>
+                        <p>Jumlah Idle Time Teller: {{ stats.jumlah_idle_time_teller }}</p>
+                        <p>Waktu Selesai Dilayani yang Terakhir: {{ stats.waktu_selesai_terakhir }}</p>
+                    </div>
+                    <div>
+                        <p>Rata-rata Waktu Tunggu: {{ stats.rata_waktu_tunggu | round(2) }}</p>
+                        <p>Peluang Nasabah Menunggu: {{ stats.peluang_nasabah_menunggu | round(0) }}%</p>
+                        <p>Rata-rata Waktu Pelayanan: {{ stats.rata_waktu_pelayanan | round(2) }}</p>
+                        <p>Rata-rata Waktu Dalam Sistem: {{ stats.rata_waktu_dalam_sistem | round(2) }}</p>
+                        <p>Persentase Teller Menganggur: {{ stats.persentase_teller_menganggur | round(0) }}%</p>
+                        <p>Rata-rata Waktu Antar Kedatangan: {{ stats.rata_waktu_antar_kedatangan | round(2) }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form di sisi kanan -->
+        <div class="w-full lg:w-1/3 p-2">
+            <div class="bg-white shadow-md rounded p-4">
+                <form action="/submit_all" method="post" class="space-y-4">
+                    <div>
+                        <label for="nasabah" class="block text-gray-700 font-bold mb-2">Nasabah</label>
+                        <input type="number" id="nasabah" name="nasabah" class="w-full border rounded px-3 py-2" required>
+                    </div>
+                    <div>
+                        <label for="max_kedatangan" class="block text-gray-700 font-bold mb-2">Maksimal Waktu Antar Kedatangan</label>
+                        <input type="number" id="max_kedatangan" name="max_kedatangan" class="w-full border rounded px-3 py-2" required>
+                    </div>
+                    <div>
+                        <label for="max_pelayanan" class="block text-gray-700 font-bold mb-2">Maksimal Waktu Pelayanan</label>
+                        <input type="number" id="max_pelayanan" name="max_pelayanan" class="w-full border rounded px-3 py-2" required>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                            GENERATE
+                        </button>
+                        <form action="/save_to_excel" method="post">
+                            <input type="hidden" name="rows_data" value="{{ rows | tojson }}">
+                            <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                                SIMPAN
+                            </button>
+                        </form>
+                    </div>
+                </form>
+            </div>
+            <!-- Tambahkan bagian "Hasil" di bawah form -->
+            <div class="mt-4 bg-white shadow-md rounded p-4">
+                <h3 class="text-lg font-bold mb-2">Hasil</h3>
+                <p>Dari simulasi diatas tampak bahwa sistem pelayanan dengan 1 teller <strong>{{ stats.keterangan }}</strong>,</p>
+    <p>Sebab tingkat antrian terhitung <strong>{{ stats.keterangan_tingkat }}</strong> sebesar <strong>{{ stats.peluang_nasabah_menunggu | round(0) }}%</strong>, walaupun persentase teller menganggur sebesar <strong>{{ stats.persentase_teller_menganggur | round(0) }}%</strong></p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
